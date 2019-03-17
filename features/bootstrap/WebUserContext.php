@@ -4,6 +4,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
+use PHPUnit\Framework\Assert;
 
 /**
  * Defines application features from the specific context.
@@ -26,7 +27,11 @@ class WebUserContext extends RawMinkContext implements Context
      */
     public function iAmNotLoggedIn()
     {
-        throw new PendingException();
+        $logoutLink = $this->getSession()
+            ->getPage()
+            ->hasLink('Logout');
+
+        Assert::assertFalse($logoutLink,'The link "Logout" is in the page.');
     }
 
 
