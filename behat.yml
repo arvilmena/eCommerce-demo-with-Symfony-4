@@ -1,0 +1,16 @@
+default:
+  extensions:
+      Behat\MinkExtension:
+        base_url: http://localhost:8000
+        goutte: ~
+        selenium2:
+          wd_host: "http://127.0.0.1:4444/wd/hub"
+        browser_name: 'chrome'
+
+  suites:
+    default:
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+        - FeatureContext
+        - WebUserContext
+      paths: ['%paths.base%/features/web']
