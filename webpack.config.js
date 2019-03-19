@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 Encore
     // directory where compiled assets will be stored
@@ -55,4 +56,31 @@ Encore
     //.addEntry('admin', './assets/js/admin.js')
 ;
 
-module.exports = Encore.getWebpackConfig();
+let config = Encore.getWebpackConfig();
+config.watchOptions = { poll: true, ignored: /node_modules/ };
+
+config.plugins.push(
+    new BrowserSyncPlugin(
+        {
+            proxy: 'http://localhost:8000',
+            port: '8001',
+            files: [ // watch on changes
+                {
+                    match: ['public/build/**/*.js'],
+                    fn: function (event, file) {
+                        if (event === 'change') {
+                            const bs = require('browser-sync').get('bs-webpack-plugin');
+                            bs.reload();
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            // reload: false, // this allow webpack server to take care of instead browser sync
+            name: 'bs-webpack-plugin',
+        },
+    )
+);
+
+module.exports = config;
