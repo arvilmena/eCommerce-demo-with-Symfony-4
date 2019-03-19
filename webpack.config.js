@@ -54,11 +54,13 @@ Encore
     // uncomment if you use API Platform Admin (composer req api-admin)
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
+
+    .enablePostCssLoader()
 ;
 
 let config = Encore.getWebpackConfig();
-config.watchOptions = { poll: true, ignored: /node_modules/ };
 
+config.watchOptions = { poll: true, ignored: /node_modules/ };
 config.plugins.push(
     new BrowserSyncPlugin(
         {
@@ -77,7 +79,7 @@ config.plugins.push(
             ]
         },
         {
-            // reload: false, // this allow webpack server to take care of instead browser sync
+            reload: false, // this allow webpack server to take care of instead browser sync
             name: 'bs-webpack-plugin',
         },
     )
