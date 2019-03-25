@@ -1,16 +1,23 @@
 payum:
-    storages:
-        Payum\Core\Model\Payment:
-            filesystem:
-                storage_dir: '%kernel.root_dir%/Resources/payments'
-                id_property: number
+#    storages:
+#        Payum\Core\Model\Payment:
+#            filesystem:
+#                storage_dir: '%kernel.root_dir%/Resources/payments'
+#                id_property: number
+#
+#    security:
+#        token_storage:
+#            Payum\Core\Model\Token:
+#                filesystem:
+#                    storage_dir: '%kernel.root_dir%/Resources/gateways'
+#                    id_property: hash
 
     security:
         token_storage:
-            Payum\Core\Model\Token:
-                filesystem:
-                    storage_dir: '%kernel.root_dir%/Resources/gateways'
-                    id_property: hash
+            App\Entity\PaymentToken: { doctrine: orm }
+
+    storages:
+        App\Entity\Payment: { doctrine: orm }
 
     gateways:
         offline:
