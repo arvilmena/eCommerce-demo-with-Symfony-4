@@ -5,10 +5,10 @@ namespace App\Controller\Web;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractController
+class HomeController extends AbstractController
 {
     /**
-     * @Route("/web", name="web_index")
+     * @Route("/web", name="web_home")
      */
     public function index()
     {
@@ -64,7 +64,7 @@ class DefaultController extends AbstractController
             ),
         );
 
-        return $this->render('web/default/index.html.twig', [
+        return $this->render('web/default/home.html.twig', [
             'products' => $products,
         ]);
     }
