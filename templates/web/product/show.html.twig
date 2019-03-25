@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} details | {{ parent() }}{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row">
+            <div class="col col-12">
+                <h1>{{ product.name }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-12 col-md-6 text-center">
+                <img class="img-fluid" src="{{ asset('assets/products/' ~ product.image) }}">
+            </div>
+            <div class="col col-12 col-md-6">
+                <h3>Some info about the product:</h3>
+                <p>{{ product.description }}</p>
+                <h3>Price: ${{ product.price|number_format(2) }}</h3>
+                <a href="{{ path('web_home') }}" class="btn btn-outline-warning">Back to Products</a>
+                <a href="#" class="btn btn-outline-success">Add to cart</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
