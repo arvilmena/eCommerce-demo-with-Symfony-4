@@ -72,9 +72,11 @@
                 <h5><span class="text-title"> subtotal :</span> <strong>$ 88 </strong></h5>
                 <h5><span class="text-title"> tax :</span> <strong>$ 8.8 </strong></h5>
                 <h5><span class="text-title"> total :</span> <strong>$ 96.8 </strong></h5>
-                <div>
-                    <img class="img-fluid" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-large.png" alt="Check out with PayPal" />
-                </div>
+                <form action="{{ path('web_cart_checkout') }}" method="POST">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fab fa-paypal"></i> Checkout with PayPal
+                    </button>
+                </form>
             </div>
         </div>
 
