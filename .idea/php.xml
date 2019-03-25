@@ -151,6 +151,23 @@
       <path value="$PROJECT_DIR$/vendor/php-cs-fixer/diff" />
       <path value="$PROJECT_DIR$/vendor/symfony/webpack-encore-bundle" />
       <path value="$PROJECT_DIR$/../vendor/twig/extensions" />
+      <path value="$PROJECT_DIR$/../vendor/php-http/message-factory" />
+      <path value="$PROJECT_DIR$/../vendor/php-http/httplug" />
+      <path value="$PROJECT_DIR$/../vendor/php-http/guzzle6-adapter" />
+      <path value="$PROJECT_DIR$/../vendor/php-http/message" />
+      <path value="$PROJECT_DIR$/../vendor/php-http/promise" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-parser" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-schemes" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-components" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-hostname-parser" />
+      <path value="$PROJECT_DIR$/../vendor/payum/payum-bundle" />
+      <path value="$PROJECT_DIR$/../vendor/payum/iso4217" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/../vendor/league/uri-manipulations" />
+      <path value="$PROJECT_DIR$/../vendor/clue/stream-filter" />
+      <path value="$PROJECT_DIR$/../vendor/payum/paypal-express-checkout-nvp" />
+      <path value="$PROJECT_DIR$/../vendor/payum/core" />
+      <path value="$PROJECT_DIR$/../vendor/psr/http-client" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
