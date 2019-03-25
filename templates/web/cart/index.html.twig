@@ -73,7 +73,7 @@
                 <h5><span class="text-title"> tax :</span> <strong>$ 8.8 </strong></h5>
                 <h5><span class="text-title"> total :</span> <strong>$ 96.8 </strong></h5>
                 <form action="{{ path('web_cart_checkout') }}" method="POST">
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-primary" type="submit" name="gateway" value="paypal_express_checkout">
                         <i class="fab fa-paypal"></i> Checkout with PayPal
                     </button>
                 </form>

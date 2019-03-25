@@ -20,11 +20,9 @@ payum:
         App\Entity\Payment: { doctrine: orm }
 
     gateways:
-        offline:
-            factory: offline
         paypal_express_checkout:
-            factory: paypal_express_checkout
-            username: '%env(PAYPAL_USERNAME)%'
-            password: '%env(PAYPAL_PASSWORD)%'
-            signature: '%env(PAYPAL_SIGNATURE)%'
+            factory: 'paypal_express_checkout'
+            username: '%env(PAYPAL_MERCHANT_USERNAME)%'
+            password: '%env(PAYPAL_MERCHANT_PASSWORD)%'
+            signature: '%env(PAYPAL_MERCHANT_SIGNATURE)%'
             sandbox: true
