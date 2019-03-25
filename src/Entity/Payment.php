@@ -3,11 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Payum\Core\Model\Payment as BasePayment;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PaymentRepository")
  */
-class Payment
+class Payment extends BasePayment
 {
     /**
      * @ORM\Id()
