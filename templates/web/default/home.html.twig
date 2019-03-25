@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DefaultController!{% endblock %}
+
+{% block body %}
+
+    <section class="container">
+        <div class="row">
+            <div class="col col-12 text-center">
+                <h1>Our Products</h1>
+            </div>
+        </div>
+
+        <div class="row products">
+
+            {% for product in products %}
+            <div class="col col-12 col-sm-6 col-xl-3 my-3">
+                <div class="card">
+                    <a class="mb-2" href="#">
+                        <img class="card-img-top" src="{{ asset('assets/products/' ~ product.image ) }}" alt="Card image cap">
+                    </a>
+                    <div class="card-body text-right px-0 py-0">
+                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-cart-plus"></i>&nbsp;&nbsp;Add to cart</a>
+                        {#<p class="card-text text-center text-xl-left">{{ product.description|truncate(90) }}</p>#}
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <div class="text-left product-name">
+                                <strong>{{ product.name }}</strong>
+                            </div>
+                            <div class="text-right product-price">
+                                <em>${{ product.price|number_format(2) }}</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+{% endblock %}

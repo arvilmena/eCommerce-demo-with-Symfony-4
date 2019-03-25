@@ -24,7 +24,8 @@
         "symfony/validator": "4.2.*",
         "symfony/web-link": "4.2.*",
         "symfony/webpack-encore-bundle": "^1.2",
-        "symfony/yaml": "4.2.*"
+        "symfony/yaml": "4.2.*",
+        "twig/extensions": "^1.5"
     },
     "require-dev": {
         "behat/mink": "dev-master",
