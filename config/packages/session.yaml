@@ -1,0 +1,13 @@
+framework:
+    session:
+        # enables the support of sessions in the app
+        enabled: true
+        # ID of the service used for session storage.
+        # NULL =  means that PHP's default session mechanism is used
+#        handler_id: null
+#        # improves the security of the cookies used for sessions
+#        cookie_secure: 'auto'
+#        cookie_samesite: 'lax'
+
+        handler_id: 'session.handler.native_file'
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'

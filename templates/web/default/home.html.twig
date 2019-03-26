@@ -20,7 +20,16 @@
                         <img class="card-img-top" src="{{ asset('assets/products/' ~ product.image ) }}" alt="Card image cap">
                     </a>
                     <div class="card-body text-right px-0 py-0">
-                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-cart-plus"></i>&nbsp;&nbsp;Add to cart</a>
+                        {% if product.id in alreadyInCart %}
+                            <div class="alert alert-success d-inline-block my-0 py-1 px-1">
+                                <small><i class="fas fa-check"></i> Already in cart.</small>
+                            </div>
+                        {% else %}
+                        <form class="" action="{{ path('web_cart_add', {id: product.id, qty: 1}) }}" method="POST">
+                            <input type="hidden" name="returnTo" value="{{ app.request.attributes.get('_route') }}">
+                            <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-cart-plus"></i>&nbsp;&nbsp;Add to cart</button>
+                        </form>
+                        {% endif %}
                         {#<p class="card-text text-center text-xl-left">{{ product.description|truncate(90) }}</p>#}
                     </div>
                     <div class="card-footer">

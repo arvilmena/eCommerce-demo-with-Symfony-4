@@ -3,23 +3,139 @@
 namespace App\Controller\Web;
 
 use App\Entity\Payment;
+use App\Entity\Product;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Payum;
 use Payum\Core\Request\GetHumanStatus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends AbstractController
 {
+
+    private $session;
+
+    const CART_SESSION_NAME = 'app_cart_items';
+
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
     /**
      * @Route("/web/cart", name="web_cart")
      */
-    public function index()
+    public function index(ProductRepository $productRepository)
     {
+
+        $inventory = array('totalCost' => '0', 'products' => array());
+
+        $cartItems = $this->getCartItems();
+
+        $cartItemsCount = count($cartItems);
+
+        for($i=0; $i<$cartItemsCount; $i++) {
+            $product = $productRepository->find($cartItems[$i]['productId']);
+            $inventory['products'][$i]['product'] = $product;
+            $inventory['products'][$i]['qty'] = $cartItems[$i]['qty'];
+            $inventory['products'][$i]['total'] = floatval($product->getPrice()) * $cartItems[$i]['qty'];
+            $inventory['totalCost'] += $inventory['products'][$i]['total'];
+        }
+
         return $this->render('web/cart/index.html.twig', [
-            'controller_name' => 'CartController',
+            'inventory' => $inventory,
         ]);
+    }
+
+    /**
+     * @Route("/web/cart/reduce/{id}/{qty}", name="web_cart_reduce", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
+     */
+    public function reduceAction(Product $product, $qty = 1) {
+
+        $productId = $product->getId();
+
+        $cartItems = $this->getCartItems();
+
+        // check if $productId is already in cart.
+        $key = array_search($productId, array_column($cartItems, 'productId'));
+
+        if (false !== $key) {
+            $cartItems[$key]['qty'] -= $qty;
+
+            // check if qty reached 0, then remove it.
+            if (1 > $cartItems[$key]['qty']) {
+                unset($cartItems[$key]);
+                // reset index.
+                $cartItems = array_values($cartItems);
+            }
+        } else {
+            // create a new item in cart.
+            $cartItems[] = array(
+                'productId' => $productId,
+                'qty' => $qty,
+            );
+        }
+
+        // update user's session.
+        $this->session->set(self::CART_SESSION_NAME, $cartItems);
+
+        return $this->redirectToRoute('web_cart');
+    }
+
+    /**
+     * @Route("/web/cart/add/{id}/{qty}", name="web_cart_add", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
+     */
+    public function addAction(Product $product, $qty = 1, Request $request) {
+
+        $productId = $product->getId();
+
+        $cartItems = $this->getCartItems();
+
+        // check if $productId is already in cart.
+        $key = array_search($productId, array_column($cartItems, 'productId'));
+
+        if (false !== $key) {
+            $cartItems[$key]['qty'] += $qty;
+        } else {
+            // create a new item in cart.
+            $cartItems[] = array(
+                'productId' => $productId,
+                'qty' => $qty,
+            );
+        }
+
+        // update user's session.
+        $this->session->set(self::CART_SESSION_NAME, $cartItems);
+
+        // if the returnTo field has value, return it to them.
+        $pathName = $request->request->get('returnTo');
+        if (null !== $pathName) {
+            return $this->redirectToRoute($pathName);
+        } else {
+            return $this->redirectToRoute('web_cart');
+        }
+    }
+
+    /**
+     * @return array
+     */
+    // TODO: Move cart item manipulation to a service that can be injected to different routes.
+    // TODO: CartItems should have an interface.
+    private function getCartItems() {
+        return $this->session->get(self::CART_SESSION_NAME, array());
+    }
+
+    /**
+     * @Route("/web/cart/clear", name="web_cart_clear")
+     */
+    public function purgeAction() {
+
+        $this->session->set(self::CART_SESSION_NAME, array());
+
+        return $this->redirectToRoute('web_cart');
     }
 
     /**

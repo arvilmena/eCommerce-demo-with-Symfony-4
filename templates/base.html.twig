@@ -22,6 +22,8 @@
     <div class="container pt-5"></div>
 
     <main>
+
+        {{ dump(app.session.get('app_cart_items')) }}
         {% block body %}{% endblock %}
     </main>
 
