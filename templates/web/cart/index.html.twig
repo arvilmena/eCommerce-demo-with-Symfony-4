@@ -63,7 +63,9 @@
                 </div>
             </div>
             <div class="col-10 mx-auto col-lg-2 ">
-                <a href="#" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a>
+                <form action="{{ path('web_cart_remove', {id: item.product.id}) }}" method="POST">
+                    <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                </form>
             </div>
             <div class="col-10 mx-auto col-lg-2 ">
                 <strong><span class="d-lg-none">item total :</span> $ {{ item.total|number_format(2) }} </strong>

@@ -51,9 +51,31 @@ class CartController extends AbstractController
     }
 
     /**
+     * @Route("/web/cart/remove/{id}", name="web_cart_remove", requirements={"id"="\d+"}, methods={"POST"})
+     */
+    public function removeAction(Product $product)
+    {
+        $cartItems = $this->getCartItems();
+
+        $key = array_search($product->getId(), array_column($cartItems, 'productId'));
+
+        if ( false !== $key ) {
+            unset($cartItems[$key]);
+            // reset index.
+            $cartItems = array_values($cartItems);
+
+            // update user's session.
+            $this->session->set(self::CART_SESSION_NAME, $cartItems);
+        }
+
+        return $this->redirectToRoute('web_cart');
+    }
+
+    /**
      * @Route("/web/cart/reduce/{id}/{qty}", name="web_cart_reduce", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function reduceAction(Product $product, $qty = 1) {
+    public function reduceAction(Product $product, $qty = 1)
+    {
 
         $productId = $product->getId();
 
@@ -88,7 +110,8 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/add/{id}/{qty}", name="web_cart_add", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function addAction(Product $product, $qty = 1, Request $request) {
+    public function addAction(Product $product, $qty = 1, Request $request)
+    {
 
         $productId = $product->getId();
 
@@ -124,7 +147,8 @@ class CartController extends AbstractController
      */
     // TODO: Move cart item manipulation to a service that can be injected to different routes.
     // TODO: CartItems should have an interface.
-    private function getCartItems() {
+    private function getCartItems()
+    {
         return $this->session->get(self::CART_SESSION_NAME, array());
     }
 
