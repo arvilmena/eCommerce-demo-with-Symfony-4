@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Payum\Core\Model\Token;
 
 /**
@@ -11,4 +12,5 @@ use Payum\Core\Model\Token;
  */
 class PaymentToken extends Token
 {
+    use TimestampableEntity;
 }
