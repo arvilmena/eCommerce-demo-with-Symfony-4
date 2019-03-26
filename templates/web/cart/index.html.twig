@@ -82,11 +82,9 @@
         <div class="row my-5">
             <div class="col col-12 text-capitalize text-capitalize text-center text-lg-right">
                 <h5><span class="text-title"> total :</span> <strong>$ {{ inventory.totalCost|number_format(2) }} </strong></h5>
-                <form action="{{ path('web_cart_checkout') }}" method="POST">
-                    <button class="btn btn-primary" type="submit" name="gateway" value="paypal_express_checkout">
-                        <i class="fab fa-paypal"></i> Checkout with PayPal
-                    </button>
-                </form>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checkoutModal">
+                    Checkout
+                </button>
             </div>
         </div>
 
@@ -99,4 +97,38 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <form action="{{ path('web_cart_checkout') }}" method="POST">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Checking out...</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                        <div class="form-group">
+                            <label for="contactEmail">Please fill up your email address.<br> We will contact you once we've verified your payment.</label>
+                            <input name="contactEmail" type="email" class="form-control" id="contactEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" name="gateway" value="paypal_express_checkout">
+                            <i class="fab fa-paypal"></i> Checkout with PayPal
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal ends -->
 {% endblock %}
