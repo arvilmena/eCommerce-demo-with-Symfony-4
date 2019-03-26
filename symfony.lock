@@ -165,6 +165,9 @@
             ".php_cs.dist"
         ]
     },
+    "fzaninotto/faker": {
+        "version": "v1.8.0"
+    },
     "gedmo/doctrine-extensions": {
         "version": "v2.4.36"
     },
