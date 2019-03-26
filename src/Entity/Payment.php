@@ -21,8 +21,43 @@ class Payment extends BasePayment
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    private $readableStatus;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $paymentGateway;
+
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReadableStatus(): ?string
+    {
+        return $this->readableStatus;
+    }
+
+    public function setReadableStatus(?string $readableStatus): self
+    {
+        $this->readableStatus = $readableStatus;
+
+        return $this;
+    }
+
+    public function getPaymentGateway(): ?string
+    {
+        return $this->paymentGateway;
+    }
+
+    public function setPaymentGateway(?string $paymentGateway): self
+    {
+        $this->paymentGateway = $paymentGateway;
+
+        return $this;
     }
 }

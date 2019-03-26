@@ -2,6 +2,8 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Payment;
+use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Payum;
 use Payum\Core\Request\GetHumanStatus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,16 +40,15 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/checkout/done", name="web_cart_done")
      */
-    public function doneAction(Request $request, Payum $payum)
+    public function doneAction(Request $request, Payum $payum, EntityManagerInterface $em)
     {
-        $token = $payum->getHttpRequestVerifier()->verify($request);
 
         $token = $payum->getHttpRequestVerifier()->verify($request);
 
         $gateway = $payum->getGateway($token->getGatewayName());
 
         // You can invalidate the token, so that the URL cannot be requested any more:
-        // $this->get('payum')->getHttpRequestVerifier()->invalidate($token);
+        $payum->getHttpRequestVerifier()->invalidate($token);
 
         // Once you have the token, you can get the payment entity from the storage directly.
         // $identity = $token->getDetails();
@@ -55,18 +56,27 @@ class CartController extends AbstractController
 
         // Or Payum can fetch the entity for you while executing a request (preferred).
         $gateway->execute($status = new GetHumanStatus($token));
+
+        /* @var Payment $payment */
         $payment = $status->getFirstModel();
 
-        // Now you have order and payment status
+        // save payment gateway type and readable status to database.
+        $payment->setPaymentGateway($token->getGatewayName());
+        $payment->setReadableStatus($status->getValue());
+        $em->persist($payment);
+        $em->flush();
 
-        return $this->json(array(
+        // Now you have order and payment status
+        $summary = array(
             'status' => $status->getValue(),
             'payment' => array(
                 'total_amount' => $payment->getTotalAmount(),
                 'currency_code' => $payment->getCurrencyCode(),
                 'details' => $payment->getDetails(),
             ),
-        ));
+        );
+
+        return $this->redirectToRoute('web_cart', $request->query->all());
     }
 
     private function checkoutWithPaypalExpressCheckout(Payum $payum)
@@ -79,7 +89,7 @@ class CartController extends AbstractController
         $payment = $storage->create();
         $payment->setNumber(uniqid());
         $payment->setCurrencyCode('USD');
-        $payment->setTotalAmount(123); // 1.23 EUR
+        $payment->setTotalAmount(123); // 1.23
         $payment->setDescription('Buying stuffs');
         $payment->setClientId('anId');
         $payment->setClientEmail('arvilmena@gmail.com');
