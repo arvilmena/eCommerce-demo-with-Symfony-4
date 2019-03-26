@@ -33,11 +33,13 @@
         {% for item in inventory.products %}
         <div class="row my-5 text-capitalize text-center align-items-center">
             <div class="col-10 mx-auto col-lg-2">
-                <img
-                    src="{{ asset('assets/products/' ~ item.product.image) }}"
-                    class="img-fluid" alt=""
-                    style="width: auto;min-height: 5rem;"
-                >
+                <a href="{{ path('web_product', {slug: item.product.slug}) }}">
+                    <img
+                        src="{{ asset('assets/products/' ~ item.product.image) }}"
+                        class="img-fluid" alt=""
+                        style="width: auto;min-height: 5rem;"
+                    >
+                </a>
             </div>
             <div class="col-10 mx-auto col-lg-2 ">
                 <strong><span class="d-lg-none">product :</span> {{ item.product.name }}</strong>

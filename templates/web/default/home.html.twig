@@ -16,14 +16,12 @@
             {% for product in products %}
             <div class="col col-12 col-sm-6 col-xl-3 my-3">
                 <div class="card">
-                    <a class="mb-2" href="#">
+                    <a class="mb-2" href="{{ path('web_product', {slug: product.slug}) }}">
                         <img class="card-img-top" src="{{ asset('assets/products/' ~ product.image ) }}" alt="Card image cap">
                     </a>
                     <div class="card-body text-right px-0 py-0">
                         {% if product.id in alreadyInCart %}
-                            <div class="alert alert-success d-inline-block my-0 py-1 px-1">
-                                <small><i class="fas fa-check"></i> Already in cart.</small>
-                            </div>
+                            <a href="{{ path('web_cart') }}" class="btn btn-secondary btn-sm"><i class="fas fa-check"></i> Already in cart</a>
                         {% else %}
                         <form class="" action="{{ path('web_cart_add', {id: product.id, qty: 1}) }}" method="POST">
                             <input type="hidden" name="returnTo" value="{{ app.request.attributes.get('_route') }}">

@@ -10,9 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
 
-    const CART_SESSION_NAME = 'app_cart_items';
-
+    // TODO: Move cart item manipulation to a service that can be injected to different routes.
     private $session;
+    const CART_SESSION_NAME = 'app_cart_items';
 
     public function __construct(SessionInterface $session)
     {
@@ -38,6 +38,7 @@ class HomeController extends AbstractController
     /**
      * @return array
      */
+    // TODO: Move cart item manipulation to a service that can be injected to different routes.
     private function extractIDsFromCart()
     {
         $productIds = array();

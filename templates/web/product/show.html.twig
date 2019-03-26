@@ -13,12 +13,20 @@
             <div class="col col-12 col-md-6 text-center">
                 <img class="img-fluid" src="{{ asset('assets/products/' ~ product.image) }}">
             </div>
-            <div class="col col-12 col-md-6">
+            <div class="col col-12 col-md-6 text-center text-md-left">
                 <h3>Some info about the product:</h3>
                 <p>{{ product.description }}</p>
-                <h3>Price: ${{ product.price|number_format(2) }}</h3>
+                <h3 class="my-5">Price: ${{ product.price|number_format(2) }}</h3>
+
                 <a href="{{ path('web_home') }}" class="btn btn-outline-warning">Back to Products</a>
-                <a href="#" class="btn btn-outline-success">Add to cart</a>
+                {% if product.id in alreadyInCart %}
+                    <a href="{{ path('web_cart') }}" class="btn btn-outline-secondary"><i class="fas fa-check"></i> Already in cart</a>
+                {% else %}
+                    <form class="d-inline-block" action="{{ path('web_cart_add', {id: product.id, qty: 1}) }}" method="POST">
+                        <button type="submit" class="btn btn-outline-success">Add to cart</button>
+                    </form>
+                {% endif %}
+
             </div>
         </div>
     </section>
