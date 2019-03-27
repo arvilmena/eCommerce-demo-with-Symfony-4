@@ -20,13 +20,16 @@
                     <tbody>
                     {% for payment in payments %}
                         <tr>
-                            <td>{{ payment.updatedAt|date('F j, Y') }}</td>
+                            <td>{{ payment.updatedAt|date('F j, Y') }}<br>{{ payment.updatedAt|date('g:i a') }}</td>
                             <td>{{ payment.description|split(';')|join('<br>')|raw }}</td>
-                            <td>{{ payment.clientEmail }}</td>
+                            <td><a href="mailto:{{ payment.clientEmail }}?subject=Regarding your order">{{ payment.clientEmail }}</a></td>
                             <td>{{ (payment.totalAmount / 100)|number_format(2) }}</td>
                             {% if payment.readableStatus == 'captured' %}
                                 <td class="bg-success">
                                     <i class="fas fa-check"></i> Paid
+                                    {% if payment.paymentGateway == 'paypal_express_checkout' %}
+                                        <br>with Paypal Express Checkout
+                                    {% endif %}
                                 </td>
                             {% elseif payment.readableStatus == 'canceled' %}
                                 <td class="bg-danger">
@@ -37,6 +40,10 @@
                                     {{ payment.readableStatus|title }}
                                 </td>
                             {% endif %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center"><strong>No payment done yet.</strong></td>
                         </tr>
                     {% endfor %}
                     </tbody>
