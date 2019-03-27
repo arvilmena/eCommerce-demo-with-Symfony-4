@@ -3,44 +3,43 @@
  * Created by PhpStorm.
  * User: arvil
  * Date: 2019-03-27
- * Time: 11:38
+ * Time: 11:38.
  */
 
 namespace App\Helper;
 
-
 use App\Entity\Product;
 
 /**
- * Class CartInventory
- * @package App\Helper
+ * Class CartInventory.
  */
 class CartInventory
 {
-
     const PRODUCT_ID_ARRAY_KEY = 'productId';
 
     /**
      * @var array
      */
-    private $items = array();
+    private $items = [];
 
     /**
      * @return array
      */
-    public function getProductIds() {
+    public function getProductIds()
+    {
         $ids = array_column($this->getItems(), self::PRODUCT_ID_ARRAY_KEY);
 
-        return (is_array($ids)) ? $ids : array();
+        return (is_array($ids)) ? $ids : [];
     }
 
     /**
      * @param Product $product
-     * @param int $qty
+     * @param int     $qty
+     *
      * @return $this
      */
-    public function addProduct(Product $product, int $qty = 1) {
-
+    public function addProduct(Product $product, int $qty = 1)
+    {
         $productId = $product->getId();
 
         // check if $productId is already in cart.
@@ -50,10 +49,10 @@ class CartInventory
             $this->items[$key]['qty'] += $qty;
         } else {
             // create a new item in cart.
-            $this->items[] = array(
+            $this->items[] = [
                 self::PRODUCT_ID_ARRAY_KEY => $productId,
                 'qty' => $qty,
-            );
+            ];
         }
 
         // remove product if this operation causes the qty to go below 1.
@@ -62,14 +61,15 @@ class CartInventory
         }
 
         return $this;
-
     }
 
     /**
      * @param Product $product
+     *
      * @return array $this->items
      */
-    public function removeProduct(Product $product) {
+    public function removeProduct(Product $product)
+    {
         $productId = $product->getId();
 
         // check if $productId is indeed in cart.
@@ -84,6 +84,7 @@ class CartInventory
 
     /**
      * @param int $key
+     *
      * @return array $this->items
      */
     private function unsetInventoryKey(int $key)
@@ -97,6 +98,7 @@ class CartInventory
 
     /**
      * @param int $productId
+     *
      * @return false|int
      */
     private function getProductKey(int $productId)
@@ -107,8 +109,8 @@ class CartInventory
     /**
      * @return array
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->items;
     }
-
 }

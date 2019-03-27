@@ -23,7 +23,6 @@ class ProductController extends AbstractController
      */
     public function show(Product $product)
     {
-
         $alreadyInCart = $this->extractIDsFromCart();
 
         return $this->render('web/product/show.html.twig', [
@@ -38,10 +37,11 @@ class ProductController extends AbstractController
     // TODO: Move cart item manipulation to a service that can be injected to different routes.
     private function extractIDsFromCart()
     {
-        $productIds = array();
+        $productIds = [];
         foreach ($this->getCartItems() as $item) {
             $productIds[] = $item['productId'];
         }
+
         return $productIds;
     }
 
@@ -49,7 +49,8 @@ class ProductController extends AbstractController
      * @return array
      */
     // TODO: Move cart item manipulation to a service that can be injected to different routes.
-    private function getCartItems() {
-        return $this->session->get(self::CART_SESSION_NAME, array());
+    private function getCartItems()
+    {
+        return $this->session->get(self::CART_SESSION_NAME, []);
     }
 }

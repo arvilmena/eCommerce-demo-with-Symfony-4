@@ -11,7 +11,6 @@ use Payum\Core\Model\Payment as BasePayment;
  */
 class Payment extends BasePayment
 {
-
     use TimestampableEntity;
 
     /**
@@ -30,7 +29,6 @@ class Payment extends BasePayment
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $paymentGateway;
-
 
     public function getId(): ?int
     {

@@ -55,16 +55,17 @@ class CartService
         return $this;
     }
 
-    public function describeCart() {
+    public function describeCart()
+    {
         $items = $this->getCartInventory()->getItems();
 
         $itemsCount = count($items);
 
         $string = '';
 
-        for($i=0; $i<$itemsCount; $i++) {
+        for ($i = 0; $i < $itemsCount; ++$i) {
             $product = $this->productRepository->find($items[$i][$this->getCartInventory()::PRODUCT_ID_ARRAY_KEY]);
-            $string .= $items[$i]['qty'] . ' x ' . $product->getName() . '; ';
+            $string .= $items[$i]['qty'].' x '.$product->getName().'; ';
         }
 
         return trim($string, ' ;');
@@ -73,7 +74,8 @@ class CartService
     /**
      * @return int
      */
-    public function getPayumTotalCost() {
+    public function getPayumTotalCost()
+    {
         return (int) ($this->getCartCalculation()['totalCost'] * 100);
     }
 
@@ -82,11 +84,10 @@ class CartService
      */
     public function getCartCalculation()
     {
-
-        $calculation = array(
+        $calculation = [
             'totalCost' => '0', // Magic.
-            'products' => array(),
-        );
+            'products' => [],
+        ];
 
         /**
          * TODO: Implement this by getting the Products on a single SQL query.
@@ -94,11 +95,10 @@ class CartService
          *   $productIds = $this->getCartInventory()->getProductIds();
          *   $products = $this->productRepository->findById($productIds);
          */
-
         $items = $this->getCartInventory()->getItems();
         $itemsCount = count($items);
 
-        for($i=0; $i<$itemsCount; $i++) {
+        for ($i = 0; $i < $itemsCount; ++$i) {
             $product = $this->productRepository->find($items[$i][$this->getCartInventory()::PRODUCT_ID_ARRAY_KEY]);
             $calculation['products'][$i]['product'] = $product;
             $calculation['products'][$i]['qty'] = $items[$i]['qty'];
@@ -107,7 +107,6 @@ class CartService
         }
 
         return $calculation;
-
     }
 
     /**

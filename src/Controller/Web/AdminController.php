@@ -13,7 +13,6 @@ class AdminController extends AbstractController
      */
     public function index(PaymentRepository $paymentRepository)
     {
-
         $payments = $paymentRepository->findProcessed();
 
         return $this->render('web/admin/index.html.twig', [

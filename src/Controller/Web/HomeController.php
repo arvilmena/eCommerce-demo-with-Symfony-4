@@ -9,13 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-
     /**
      * @Route("/web", name="web_home")
      */
     public function index(ProductRepository $productRepository, CartService $cartService)
     {
-
         $products = $productRepository->findAll();
 
         $alreadyInCart = $cartService->getProductIds();

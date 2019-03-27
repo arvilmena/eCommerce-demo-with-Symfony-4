@@ -5,8 +5,6 @@ namespace App\Controller\Web;
 use App\Entity\Checkout;
 use App\Entity\Payment;
 use App\Entity\Product;
-use App\Repository\CheckoutRepository;
-use App\Repository\ProductRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Payum;
@@ -18,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends AbstractController
 {
-
     /**
      * @var CartService
      */
@@ -39,7 +36,6 @@ class CartController extends AbstractController
      */
     public function index()
     {
-
         $calculation = $this->cartService->getCartCalculation();
 
         return $this->render('web/cart/index.html.twig', [
@@ -62,7 +58,6 @@ class CartController extends AbstractController
      */
     public function reduceAction(Product $product, $qty = 1)
     {
-
         $this->cartService->addProduct($product, $qty * -1);
 
         return $this->redirectToRoute('web_cart');
@@ -73,7 +68,6 @@ class CartController extends AbstractController
      */
     public function addAction(Product $product, $qty = 1, Request $request)
     {
-
         $this->cartService->addProduct($product, $qty);
 
         // if the returnTo field has value, return it to them.
@@ -88,8 +82,8 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/clear", name="web_cart_clear")
      */
-    public function purgeAction() {
-
+    public function purgeAction()
+    {
         $this->cartService->purgeCartInventory();
 
         return $this->redirectToRoute('web_cart');
@@ -100,17 +94,17 @@ class CartController extends AbstractController
      */
     public function checkout(Request $request, Payum $payum)
     {
-
         $gateway = $request->request->get('gateway');
 
         // make sure buyer has supplied his contact email address.
         $email = filter_var($request->request->get('buyersEmail'), FILTER_VALIDATE_EMAIL);
         if (false === $email) {
             $this->addFlash('webCartModalError', 'Please supply your email address. So we can contact you.');
+
             return $this->redirectToRoute('web_cart');
         }
 
-        switch ( $gateway ) {
+        switch ($gateway) {
             case 'paypal_express_checkout':
                 return $this->checkoutWithPaypalExpressCheckout($payum, $email);
                 break;
@@ -122,7 +116,6 @@ class CartController extends AbstractController
      */
     public function doneAction(Request $request, Payum $payum, EntityManagerInterface $em)
     {
-
         $token = $payum->getHttpRequestVerifier()->verify($request);
 
         $gateway = $payum->getGateway($token->getGatewayName());
@@ -155,21 +148,20 @@ class CartController extends AbstractController
         }
 
         // Now you have order and payment status
-        $summary = array(
+        $summary = [
             'status' => $status->getValue(),
-            'payment' => array(
+            'payment' => [
                 'total_amount' => $payment->getTotalAmount(),
                 'currency_code' => $payment->getCurrencyCode(),
                 'details' => $payment->getDetails(),
-            ),
-        );
+            ],
+        ];
 
         return $this->redirectToRoute('web_cart', $request->query->all());
     }
 
     private function checkoutWithPaypalExpressCheckout(Payum $payum, $buyerEmail)
     {
-
         $gatewayName = 'paypal_express_checkout';
 
         $storage = $payum->getStorage('App\Entity\Payment');
@@ -192,5 +184,4 @@ class CartController extends AbstractController
 
         return $this->redirect($captureToken->getTargetUrl());
     }
-
 }
