@@ -16,6 +16,7 @@ This is a simple phone shop built on Symfony 4. The shop was inspired by the [ap
 10. ```yarn encore production```
 11. ```./bin/console server:run```
 12. Navigate to your [http://localhost:8000](http://localhost:8000)
+13. The "admin" page which lists all purchases is at [http://localhost:8000/admin](http://localhost:8000/admin) _(no authentication required)_
 
 # Screens
 
@@ -28,5 +29,11 @@ Single Product
 Cart Dashboard
 ![Cart Dashboard](/docs/images/cart.png)
 
-Cart (checking out)
-![Cart Dashboard](/docs/images/cart-checking-out.png)
+Doing the purchase
+![Doing the purchase](/docs/images/cart-check-out.png)
+
+After Purchase
+![After Purchase](/docs/images/after-purchase.png)
+
+Admin Page
+![Admin Page](/docs/images/admin.png)
