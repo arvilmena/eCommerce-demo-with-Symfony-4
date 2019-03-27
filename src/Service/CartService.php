@@ -55,6 +55,28 @@ class CartService
         return $this;
     }
 
+    public function describeCart() {
+        $items = $this->getCartInventory()->getItems();
+
+        $itemsCount = count($items);
+
+        $string = '';
+
+        for($i=0; $i<$itemsCount; $i++) {
+            $product = $this->productRepository->find($items[$i][$this->getCartInventory()::PRODUCT_ID_ARRAY_KEY]);
+            $string .= $items[$i]['qty'] . ' x ' . $product->getName() . '; ';
+        }
+
+        return trim($string, ' ;');
+    }
+
+    /**
+     * @return int
+     */
+    public function getPayumTotalCost() {
+        return (int) ($this->getCartCalculation()['totalCost'] * 100);
+    }
+
     /**
      * @return array
      */

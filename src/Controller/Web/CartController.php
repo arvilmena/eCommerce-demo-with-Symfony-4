@@ -2,8 +2,10 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Checkout;
 use App\Entity\Payment;
 use App\Entity\Product;
+use App\Repository\CheckoutRepository;
 use App\Repository\ProductRepository;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,12 +20,27 @@ class CartController extends AbstractController
 {
 
     /**
+     * @var CartService
+     */
+    private $cartService;
+    /**
+     * @var SessionInterface
+     */
+    private $session;
+
+    public function __construct(CartService $cartService, SessionInterface $session)
+    {
+        $this->cartService = $cartService;
+        $this->session = $session;
+    }
+
+    /**
      * @Route("/web/cart", name="web_cart")
      */
-    public function index(CartService $cartService)
+    public function index()
     {
 
-        $calculation = $cartService->getCartCalculation();
+        $calculation = $this->cartService->getCartCalculation();
 
         return $this->render('web/cart/index.html.twig', [
             'inventory' => $calculation,
@@ -33,9 +50,9 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/remove/{id}", name="web_cart_remove", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function removeAction(Product $product, CartService $cartService)
+    public function removeAction(Product $product)
     {
-        $cartService->removeProduct($product);
+        $this->cartService->removeProduct($product);
 
         return $this->redirectToRoute('web_cart');
     }
@@ -43,10 +60,10 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/reduce/{id}/{qty}", name="web_cart_reduce", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function reduceAction(Product $product, $qty = 1, CartService $cartService)
+    public function reduceAction(Product $product, $qty = 1)
     {
 
-        $cartService->addProduct($product, $qty * -1);
+        $this->cartService->addProduct($product, $qty * -1);
 
         return $this->redirectToRoute('web_cart');
     }
@@ -54,10 +71,10 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/add/{id}/{qty}", name="web_cart_add", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function addAction(Product $product, $qty = 1, Request $request, CartService $cartService)
+    public function addAction(Product $product, $qty = 1, Request $request)
     {
 
-        $cartService->addProduct($product, $qty);
+        $this->cartService->addProduct($product, $qty);
 
         // if the returnTo field has value, return it to them.
         $pathName = $request->request->get('returnTo');
@@ -71,9 +88,9 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/clear", name="web_cart_clear")
      */
-    public function purgeAction(CartService $cartService) {
+    public function purgeAction() {
 
-        $cartService->purgeCartInventory();
+        $this->cartService->purgeCartInventory();
 
         return $this->redirectToRoute('web_cart');
     }
@@ -95,7 +112,7 @@ class CartController extends AbstractController
 
         switch ( $gateway ) {
             case 'paypal_express_checkout':
-                return $this->checkoutWithPaypalExpressCheckout($payum);
+                return $this->checkoutWithPaypalExpressCheckout($payum, $email);
                 break;
         }
     }
@@ -129,6 +146,14 @@ class CartController extends AbstractController
         $em->persist($payment);
         $em->flush();
 
+        // if the payment was 'captured' then the transaction has been completed.
+        // hence empty the cart.
+        if ('captured' === $status->getValue()) {
+            $this->cartService->purgeCartInventory();
+            $this->session->invalidate();
+            $this->addFlash('success', 'Thank you for your purchase, we will be in touch with you soon.');
+        }
+
         // Now you have order and payment status
         $summary = array(
             'status' => $status->getValue(),
@@ -142,7 +167,7 @@ class CartController extends AbstractController
         return $this->redirectToRoute('web_cart', $request->query->all());
     }
 
-    private function checkoutWithPaypalExpressCheckout(Payum $payum)
+    private function checkoutWithPaypalExpressCheckout(Payum $payum, $buyerEmail)
     {
 
         $gatewayName = 'paypal_express_checkout';
@@ -150,12 +175,12 @@ class CartController extends AbstractController
         $storage = $payum->getStorage('App\Entity\Payment');
 
         $payment = $storage->create();
-        $payment->setNumber(uniqid());
+        $payment->setNumber($this->session->getId());
         $payment->setCurrencyCode('USD');
-        $payment->setTotalAmount(123); // 1.23
-        $payment->setDescription('Buying stuffs');
-        $payment->setClientId('anId');
-        $payment->setClientEmail('arvilmena@gmail.com');
+        $payment->setTotalAmount($this->cartService->getPayumTotalCost()); // 1.23
+        $payment->setDescription($this->cartService->describeCart());
+        $payment->setClientId($buyerEmail);
+        $payment->setClientEmail($buyerEmail);
 
         $storage->update($payment);
 
