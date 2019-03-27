@@ -19,5 +19,14 @@ This is a simple phone shop built on Symfony 4. The shop was inspired by the [ap
 
 # Screens
 
+Homepage
 ![Homepage](/docs/images/home.png)
-The homepage
+
+Single Product
+![Single Product](/docs/images/single-product.png)
+
+Cart Dashboard
+![Cart Dashboard](/docs/images/cart.png)
+
+Cart (checking out)
+![Cart Dashboard](/docs/images/cart-checking-out.png)
