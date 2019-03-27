@@ -3,7 +3,7 @@
 
         <a class="navbar-brand" href="{{ path('web_home') }}">My Phone Shop</a>
 
-        <a class="btn btn-outline-warning align-middle btn-primary ml-auto mr-3 order-md-last" href="{{ path('web_cart') }}"><i class="fa fa-cart-plus"></i> My Cart <sup>( {{ app.session.get('app_cart_items')|length }} )</sup></a>
+        <a class="btn btn-outline-warning align-middle btn-primary ml-auto mr-3 order-md-last" href="{{ path('web_cart') }}"><i class="fa fa-cart-plus"></i> My Cart <sup>( {{ app.session.get('app_cart_inventory').getItems()|length }} )</sup></a>
 
         {#<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"#}
                 {#aria-expanded="false" aria-label="Toggle navigation">#}

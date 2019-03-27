@@ -3,35 +3,33 @@
  * Created by PhpStorm.
  * User: arvil
  * Date: 2019-03-27
- * Time: 11:21
+ * Time: 11:21.
  */
 
 namespace App\Service;
 
-
 use App\Entity\Product;
 use App\Helper\CartInventory;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CartService
 {
+    const CART_SESSION_NAME = 'app_cart_inventory';
 
     /**
      * @var SessionInterface
      */
     private $session;
-
-    const CART_SESSION_NAME = 'app_cart_inventory';
     /**
-     * @var EntityManagerInterface
+     * @var ProductRepository
      */
-    private $entityManager;
+    private $productRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(ProductRepository $productRepository, SessionInterface $session)
     {
         $this->session = $session;
-        $this->entityManager = $entityManager;
+        $this->productRepository = $productRepository;
     }
 
     public function addProduct(Product $product, int $qty = 1)
@@ -57,15 +55,44 @@ class CartService
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getCartCalculation()
     {
-        return $this->getCartInventory()->calculate();
+
+        $calculation = array(
+            'totalCost' => '0', // Magic.
+            'products' => array(),
+        );
+
+        /**
+         * TODO: Implement this by getting the Products on a single SQL query.
+         *
+         *   $productIds = $this->getCartInventory()->getProductIds();
+         *   $products = $this->productRepository->findById($productIds);
+         */
+
+        $items = $this->getCartInventory()->getItems();
+        $itemsCount = count($items);
+
+        for($i=0; $i<$itemsCount; $i++) {
+            $product = $this->productRepository->find($items[$i][$this->getCartInventory()::PRODUCT_ID_ARRAY_KEY]);
+            $calculation['products'][$i]['product'] = $product;
+            $calculation['products'][$i]['qty'] = $items[$i]['qty'];
+            $calculation['products'][$i]['total'] = floatval($product->getPrice()) * $items[$i]['qty'];
+            $calculation['totalCost'] += $calculation['products'][$i]['total'];
+        }
+
+        return $calculation;
+
     }
 
     /**
      * @return array
      */
-    public function getProductIds() {
+    public function getProductIds()
+    {
         return $this->getCartInventory()->getProductIds();
     }
 
@@ -74,7 +101,7 @@ class CartService
      */
     public function getCartInventory()
     {
-        return $this->session->get(self::CART_SESSION_NAME, new CartInventory($this->entityManager));
+        return $this->session->get(self::CART_SESSION_NAME, new CartInventory());
     }
 
     /**
@@ -82,11 +109,12 @@ class CartService
      */
     public function purgeCartInventory()
     {
-        $this->session->set(self::CART_SESSION_NAME, new CartInventory($this->entityManager));
+        $this->session->set(self::CART_SESSION_NAME, new CartInventory());
     }
 
     /**
      * @param CartInventory $cartInventory
+     *
      * @return $this
      */
     private function setCartInventory(CartInventory $cartInventory)

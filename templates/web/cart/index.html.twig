@@ -54,7 +54,7 @@
                             <form class="d-inline-block" action="{{ path('web_cart_reduce', {id: item.product.id, qty: 1}) }}" method="POST">
                                 <button type="submit" class="btn btn-danger h-100">-</button>
                             </form>
-                            <input type="text" class="form-control form-control-lg d-inline-block text-center" value="{{ item.qty }}">
+                            <input readonly type="text" class="form-control form-control-lg d-inline-block text-center" value="{{ item.qty }}">
                             <form class="d-inline-block" action="{{ path('web_cart_add', {id: item.product.id, qty: 1}) }}" method="POST">
                                 <button type="submit" class="btn btn-success h-100">+</button>
                             </form>

@@ -10,7 +10,6 @@ namespace App\Helper;
 
 
 use App\Entity\Product;
-use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class CartInventory
@@ -25,39 +24,6 @@ class CartInventory
      * @var array
      */
     private $items = array();
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    public function calculate() {
-
-        $calculation = array(
-            'totalCost' => '0', // Magic.
-            'products' => array(),
-        );
-
-        $productIds = $this->getProductIds();
-
-        $products = $this->entityManager->getRepository(Product::class)->findById($productIds);
-//        $products = $entityManager->getRepository(Product::class)->findById($productIds);
-
-        dd(compact('productIds', 'products'));
-
-//        for($i=0; $i<$count; $i++) {
-//            $product = $productRepository->find($cartItems[$i]['productId']);
-//            $inventory['products'][$i]['product'] = $product;
-//            $inventory['products'][$i]['qty'] = $cartItems[$i]['qty'];
-//            $inventory['products'][$i]['total'] = floatval($product->getPrice()) * $cartItems[$i]['qty'];
-//            $inventory['totalCost'] += $inventory['products'][$i]['total'];
-//        }
-
-    }
 
     /**
      * @return array
