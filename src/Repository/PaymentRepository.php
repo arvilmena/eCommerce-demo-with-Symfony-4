@@ -19,6 +19,19 @@ class PaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Payment::class);
     }
 
+     /**
+      * @return Payment[] Returns an array of Payment objects
+      */
+    public function findProcessed()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.readableStatus IS NOT NULL')
+            ->orderBy('p.updatedAt', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Payment[] Returns an array of Payment objects
     //  */
