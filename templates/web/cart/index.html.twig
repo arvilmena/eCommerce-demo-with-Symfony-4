@@ -84,20 +84,23 @@
         <div class="row my-5">
             <div class="col col-12 text-capitalize text-capitalize text-center text-lg-right">
                 <h5><span class="text-title"> total :</span> <strong>$ {{ inventory.totalCost|number_format(2) }} </strong></h5>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checkoutModal">
-                    Checkout
-                </button>
+                {% if inventory.totalCost > 0 %}
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checkoutModal">
+                        Checkout
+                    </button>
+                {% endif %}
             </div>
         </div>
 
-
-        <div class="row mt-3">
-            <div class="col col-12 text-capitalize text-center text-lg-left">
-                <a href="/">
-                    <a href="{{ path('web_cart_clear') }}" class="btn btn-outline-danger text-uppercase mb-3 px-5"><i class="fa fa-trash"></i> clear cart</a>
-                </a>
+        {% if inventory.products|length %}
+            <div class="row mt-3">
+                <div class="col col-12 text-capitalize text-center text-lg-left">
+                    <a href="/">
+                        <a href="{{ path('web_cart_clear') }}" class="btn btn-outline-danger text-uppercase mb-3 px-5"><i class="fa fa-trash"></i> clear cart</a>
+                    </a>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </section>
 
     <!-- Modal -->
