@@ -5,6 +5,7 @@ namespace App\Controller\Web;
 use App\Entity\Payment;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Payum;
 use Payum\Core\Request\GetHumanStatus;
@@ -16,57 +17,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartController extends AbstractController
 {
 
-    private $session;
-
-    const CART_SESSION_NAME = 'app_cart_items';
-
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
-    }
-
     /**
      * @Route("/web/cart", name="web_cart")
      */
-    public function index(ProductRepository $productRepository)
+    public function index(CartService $cartService)
     {
 
-        $inventory = array('totalCost' => '0', 'products' => array());
-
-        $cartItems = $this->getCartItems();
-
-        $cartItemsCount = count($cartItems);
-
-        for($i=0; $i<$cartItemsCount; $i++) {
-            $product = $productRepository->find($cartItems[$i]['productId']);
-            $inventory['products'][$i]['product'] = $product;
-            $inventory['products'][$i]['qty'] = $cartItems[$i]['qty'];
-            $inventory['products'][$i]['total'] = floatval($product->getPrice()) * $cartItems[$i]['qty'];
-            $inventory['totalCost'] += $inventory['products'][$i]['total'];
-        }
+        $calculation = $cartService->getCartCalculation();
 
         return $this->render('web/cart/index.html.twig', [
-            'inventory' => $inventory,
+            'inventory' => $calculation,
         ]);
     }
 
     /**
      * @Route("/web/cart/remove/{id}", name="web_cart_remove", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function removeAction(Product $product)
+    public function removeAction(Product $product, CartService $cartService)
     {
-        $cartItems = $this->getCartItems();
-
-        $key = array_search($product->getId(), array_column($cartItems, 'productId'));
-
-        if ( false !== $key ) {
-            unset($cartItems[$key]);
-            // reset index.
-            $cartItems = array_values($cartItems);
-
-            // update user's session.
-            $this->session->set(self::CART_SESSION_NAME, $cartItems);
-        }
+        $cartService->removeProduct($product);
 
         return $this->redirectToRoute('web_cart');
     }
@@ -74,35 +43,10 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/reduce/{id}/{qty}", name="web_cart_reduce", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function reduceAction(Product $product, $qty = 1)
+    public function reduceAction(Product $product, $qty = 1, CartService $cartService)
     {
 
-        $productId = $product->getId();
-
-        $cartItems = $this->getCartItems();
-
-        // check if $productId is already in cart.
-        $key = array_search($productId, array_column($cartItems, 'productId'));
-
-        if (false !== $key) {
-            $cartItems[$key]['qty'] -= $qty;
-
-            // check if qty reached 0, then remove it.
-            if (1 > $cartItems[$key]['qty']) {
-                unset($cartItems[$key]);
-                // reset index.
-                $cartItems = array_values($cartItems);
-            }
-        } else {
-            // create a new item in cart.
-            $cartItems[] = array(
-                'productId' => $productId,
-                'qty' => $qty,
-            );
-        }
-
-        // update user's session.
-        $this->session->set(self::CART_SESSION_NAME, $cartItems);
+        $cartService->addProduct($product, $qty * -1);
 
         return $this->redirectToRoute('web_cart');
     }
@@ -110,28 +54,10 @@ class CartController extends AbstractController
     /**
      * @Route("/web/cart/add/{id}/{qty}", name="web_cart_add", requirements={"id"="\d+","qty"="\d+"}, methods={"POST"})
      */
-    public function addAction(Product $product, $qty = 1, Request $request)
+    public function addAction(Product $product, $qty = 1, Request $request, CartService $cartService)
     {
 
-        $productId = $product->getId();
-
-        $cartItems = $this->getCartItems();
-
-        // check if $productId is already in cart.
-        $key = array_search($productId, array_column($cartItems, 'productId'));
-
-        if (false !== $key) {
-            $cartItems[$key]['qty'] += $qty;
-        } else {
-            // create a new item in cart.
-            $cartItems[] = array(
-                'productId' => $productId,
-                'qty' => $qty,
-            );
-        }
-
-        // update user's session.
-        $this->session->set(self::CART_SESSION_NAME, $cartItems);
+        $cartService->addProduct($product, $qty);
 
         // if the returnTo field has value, return it to them.
         $pathName = $request->request->get('returnTo');
@@ -143,21 +69,11 @@ class CartController extends AbstractController
     }
 
     /**
-     * @return array
-     */
-    // TODO: Move cart item manipulation to a service that can be injected to different routes.
-    // TODO: CartItems should have an interface.
-    private function getCartItems()
-    {
-        return $this->session->get(self::CART_SESSION_NAME, array());
-    }
-
-    /**
      * @Route("/web/cart/clear", name="web_cart_clear")
      */
-    public function purgeAction() {
+    public function purgeAction(CartService $cartService) {
 
-        $this->session->set(self::CART_SESSION_NAME, array());
+        $cartService->purgeCartInventory();
 
         return $this->redirectToRoute('web_cart');
     }
