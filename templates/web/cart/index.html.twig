@@ -101,10 +101,12 @@
                 </div>
             </div>
         {% endif %}
+
+        {#{{ dump() }}#}
     </section>
 
     <!-- Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal fade {{ (app.session.flashbag.has('webCartModalError')) ? 'has-error' }}" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 
@@ -117,10 +119,16 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p></p>
+
+                        {% for flash in app.session.flashbag.get('webCartModalError') %}
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                {{ flash }}
+                            </div>
+                        {% endfor
+                        %}
                         <div class="form-group">
-                            <label for="contactEmail">Please fill up your email address.<br> We will contact you once we've verified your payment.</label>
-                            <input name="contactEmail" type="email" class="form-control" id="contactEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+                            <label for="buyersEmail">Please fill up your email address.<br> We will contact you once we've verified your payment.</label>
+                            <input name="buyersEmail" type="email" class="form-control" id="buyersEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -86,6 +86,13 @@ class CartController extends AbstractController
 
         $gateway = $request->request->get('gateway');
 
+        // make sure buyer has supplied his contact email address.
+        $email = filter_var($request->request->get('buyersEmail'), FILTER_VALIDATE_EMAIL);
+        if (false === $email) {
+            $this->addFlash('webCartModalError', 'Please supply your email address. So we can contact you.');
+            return $this->redirectToRoute('web_cart');
+        }
+
         switch ( $gateway ) {
             case 'paypal_express_checkout':
                 return $this->checkoutWithPaypalExpressCheckout($payum);

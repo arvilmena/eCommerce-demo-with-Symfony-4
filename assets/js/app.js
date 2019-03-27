@@ -1,14 +1,40 @@
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
+var App = (function(window, $) {
 
-// any CSS you require will output into a single css file (app.css in this case)
-require('../css/app.css');
+    var init = function() {
+        hello();
+        initCartCheckout();
+    };
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-// const $ = require('jquery');
+    var hello = function() {
+        console.log('Hello from app.js!');
+    };
 
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+    var initCartCheckout = function() {
+        var $modal = $('#checkoutModal');
+        if ( !$modal.length ) return;
+
+        /**
+         * Local Functions.
+         */
+        var modalHasError = function() {
+            return $modal.hasClass('has-error');
+        };
+        var showModal = function() {
+            $modal.modal({show: true});
+        }
+
+        /**
+         * Logic
+         */
+        if (modalHasError()) showModal();
+
+    };
+
+    return {
+        run: init,
+    }
+})(window, $);
+
+$(document).ready(function() {
+    App.run();
+});
